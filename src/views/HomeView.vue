@@ -76,6 +76,7 @@ const userMessage = ref({role: "user", content: [{type: "text", text: ""}]});
 
 const isSending = ref(false);
 
+// 异步方法发送请求
 async function main() {
   isSending.value = true;
   var messages = [];
@@ -107,7 +108,7 @@ async function main() {
       messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
       localStorage.message = JSON.stringify(messageArr.value);
       messageLook.value = messageArr.value.slice().reverse();
-      userMessage.value = {role: "user", content: [{type: "text", text: ""}]};
+      userMessage.value.content[0].text = "";
       isSending.value = false;
       return;
     }
