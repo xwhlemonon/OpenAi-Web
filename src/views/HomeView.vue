@@ -65,7 +65,7 @@ import {onMounted, ref} from "vue";
 import {ElMessage} from "element-plus";
 
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: "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",
   dangerouslyAllowBrowser: true
 });
 
@@ -84,35 +84,41 @@ async function main() {
   messageArr.value.length !== 0 ? Array.prototype.push.apply(messages, messageArr.value.slice(-20)) : null;
   userMessage.value.content[0].text = userMessage.value.content[0].text.trim();
   messages.push(userMessage.value);
-  const completion = await openai.chat.completions.create({
-    messages: messages,
-    temperature: 1,
-    max_tokens: 4095,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    seed: null,
-    model: "gpt-4o",
-    response_format: {
-      type: "text"
-    },
-    stream: true,
-    stream_options: {
-      include_usage: true
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: messages,
+      temperature: 1,
+      max_tokens: 4095,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      seed: null,
+      model: "gpt-4o",
+      response_format: {
+        type: "text"
+      },
+      stream: true,
+      stream_options: {
+        include_usage: true
+      }
+    });
+    var text = "";
+    for await (const chunk of completion) {
+      if (chunk.choices[0].finish_reason === "stop") {
+        messageArr.value.push(userMessage.value);
+        messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
+        localStorage.message = JSON.stringify(messageArr.value);
+        messageLook.value = messageArr.value.slice().reverse();
+        userMessage.value.content[0].text = "";
+        isSending.value = false;
+        return;
+      }
+      text += chunk.choices[0].delta.content;
     }
-  });
-  var text = "";
-  for await (const chunk of completion) {
-    if (chunk.choices[0].finish_reason === "stop") {
-      messageArr.value.push(userMessage.value);
-      messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
-      localStorage.message = JSON.stringify(messageArr.value);
-      messageLook.value = messageArr.value.slice().reverse();
-      userMessage.value.content[0].text = "";
-      isSending.value = false;
-      return;
-    }
-    text += chunk.choices[0].delta.content;
+  } catch (event) {
+    ElMessage.error("请检查您的网络。")
+    userMessage.value.content[0].text = "";
+    isSending.value = false;
   }
 }
 
