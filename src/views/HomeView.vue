@@ -1,8 +1,12 @@
 <template>
-
+  <!--发送模块-->
   <div>
-    <span style="font-size: 14px;">系统提示词：{{ systemMessage.content[0].text }}</span>
-    <el-button link size="large" style="margin-bottom: 3px; margin-left: 3px;" type="primary" @click="handleOpen">更改
+    <div
+        style="display: inline-block; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%;">
+      <span style="font-size: 14px;">系统提示词：{{ systemMessage.content[0].text }}</span>
+    </div>
+    <el-button link size="large" style="margin-bottom: 10px; margin-left: 5px;" type="primary" @click="handleOpen">
+      更改
     </el-button>
     <el-input
         v-model="userMessage.content[0].text"
@@ -13,24 +17,29 @@
         style="width: 50%; display: block; margin: 10px auto"
         type="textarea"
     />
-    <el-button
-        :disabled="isSending||userMessage.content[0].text === ''"
-        size="large"
-        style="display: block; margin: 10px auto;"
-        type="primary"
-        @click="main"
-    >发送消息
-    </el-button>
+    <div style="display: block; margin: 10px auto;">
+      <el-button
+          :disabled="isSending||userMessage.content[0].text.trim() === ''"
+          size="large"
+          type="primary"
+          @click="main"
+      >发送消息
+      </el-button>
+      <el-button link type="danger" @click="handleClear">清空历史记录</el-button>
+    </div>
   </div>
 
+  <!--消息块-->
   <div>
     <el-card
         v-for="item in messageLook"
         style="width: 50%; display: block; margin: 10px auto; box-shadow: none; border: 1px solid #000;"
     >
       <el-row :gutter="10">
-        <el-col :span="2">{{ item.role }}</el-col>
-        <el-col :span="22" style="text-align: left; overflow-wrap: break-word;">{{ item.content[0].text }}</el-col>
+        <el-col :span="3" style="text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          {{ item.role }}
+        </el-col>
+        <el-col :span="21" style="text-align: left; overflow-wrap: break-word;">{{ item.content[0].text }}</el-col>
       </el-row>
     </el-card>
   </div>
@@ -40,7 +49,7 @@
     <el-input v-model="dialogData" :autosize="{minRows: 4, maxRows: 12}" resize="none" type="textarea"/>
     <template #footer>
       <el-button @click="handleClose">取消</el-button>
-      <el-button type="primary" @click="handleDefine">确定</el-button>
+      <el-button type="primary" @click="handleDefine">保存</el-button>
     </template>
   </el-dialog>
 
@@ -86,12 +95,12 @@ async function main() {
       include_usage: true
     }
   });
-
   var text = "";
   for await (const chunk of completion) {
     if (chunk.choices[0].finish_reason === "stop") {
       messageArr.value.push(userMessage.value);
       messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
+      localStorage.message = JSON.stringify(messageArr.value);
       messageLook.value = messageArr.value.slice().reverse();
       userMessage.value = {role: "user", content: [{type: "text", text: ""}]};
       isSending.value = false;
@@ -101,7 +110,19 @@ async function main() {
   }
 }
 
-// 弹窗
+// 读取消息记录
+const loadMessage = () => {
+  messageArr.value = localStorage.message ? JSON.parse(localStorage.message) : [];
+  messageLook.value = messageArr.value.slice().reverse();
+};
+
+// 清空消息记录
+const handleClear = () => {
+  localStorage.clear();
+  loadMessage();
+};
+
+// 弹窗组合
 const dialogData = ref("");
 const dialogVisible = ref(false);
 const handleOpen = () => {
@@ -118,7 +139,7 @@ const handleDefine = () => {
 };
 
 onMounted(() => {
-  messageArr.value = localStorage.message ? JSON.parse(localStorage.message) : [];
+  loadMessage();
 });
 
 </script>
