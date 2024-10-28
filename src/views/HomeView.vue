@@ -15,7 +15,7 @@
         v-model="userMessage.content[0].text"
         v-loading="isSending"
         :autosize="{minRows: 4, maxRows: 12}"
-        placeholder="请在此输入"
+        placeholder="按 Ctrl+Enter 发送"
         resize="none"
         style="width: 50%; display: block; margin: 10px auto"
         type="textarea"
