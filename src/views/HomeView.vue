@@ -3,10 +3,13 @@
   <div>
     <div
         style="display: inline-block; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%;">
-      <span style="font-size: 14px;">系统提示词：{{ systemMessage.content[0].text }}</span>
+      <span style="font-size: 14px; user-select: none;">系统提示词：</span>{{ systemMessage.content[0].text }}
     </div>
     <el-button link size="large" style="margin-bottom: 10px; margin-left: 5px;" type="primary" @click="handleOpen">
       更改
+    </el-button>
+    <el-button link size="large" style="margin-bottom: 10px;" type="danger" @click="handleReset">
+      重置
     </el-button>
     <el-input
         v-model="userMessage.content[0].text"
@@ -77,7 +80,7 @@ async function main() {
   isSending.value = true;
   var messages = [];
   messages.push(systemMessage.value);
-  messageArr.value.length !== 0 ? Array.prototype.push.apply(messages, messageArr.value.slice(-10)) : null;
+  messageArr.value.length !== 0 ? Array.prototype.push.apply(messages, messageArr.value.slice(-20)) : null;
   userMessage.value.content[0].text = userMessage.value.content[0].text.trim();
   messages.push(userMessage.value);
   const completion = await openai.chat.completions.create({
@@ -118,13 +121,18 @@ const loadMessage = () => {
   messageLook.value = messageArr.value.slice().reverse();
 };
 
+// 读取提示词
+const loadSystemText = () => {
+  systemMessage.value.content[0].text = localStorage.systemText ? JSON.parse(localStorage.systemText) : "你是一只可爱的猫娘！";
+}
+
 // 清空消息记录
 const handleClear = () => {
-  localStorage.clear();
+  localStorage.removeItem("message");
   loadMessage();
 };
 
-// 弹窗组合
+// 弹窗全家桶
 const dialogData = ref("");
 const dialogVisible = ref(false);
 const handleOpen = () => {
@@ -146,8 +154,15 @@ const handleDefine = () => {
   handleClose();
 };
 
+// 重置提示词
+const handleReset = () => {
+  localStorage.removeItem("systemText");
+  loadSystemText();
+};
+
+// 默认加载
 onMounted(() => {
-  systemMessage.value.content[0].text = localStorage.systemText ? JSON.parse(localStorage.systemText) : "你是一只可爱的猫娘！";
+  loadSystemText();
   loadMessage();
 });
 
