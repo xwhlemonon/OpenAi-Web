@@ -59,6 +59,7 @@
 <script setup>
 import OpenAI from "openai";
 import {onMounted, ref} from "vue";
+import {ElMessage} from "element-plus";
 
 const openai = new OpenAI({
   apiKey: "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",
@@ -67,7 +68,7 @@ const openai = new OpenAI({
 
 const messageArr = ref([])
 const messageLook = ref([]);
-const systemMessage = ref({role: "system", content: [{type: "text", text: "你是一只猫娘！"}]})
+const systemMessage = ref({role: "system", content: [{type: "text", text: "你是一只可爱的猫娘！"}]})
 const userMessage = ref({role: "user", content: [{type: "text", text: ""}]});
 
 const isSending = ref(false);
@@ -76,7 +77,8 @@ async function main() {
   isSending.value = true;
   var messages = [];
   messages.push(systemMessage.value);
-  messageArr.value.length !== 0 ? Array.prototype.push.apply(messages, messageArr.value.slice(-4)) : null;
+  messageArr.value.length !== 0 ? Array.prototype.push.apply(messages, messageArr.value.slice(-10)) : null;
+  userMessage.value.content[0].text = userMessage.value.content[0].text.trim();
   messages.push(userMessage.value);
   const completion = await openai.chat.completions.create({
     messages: messages,
@@ -134,11 +136,18 @@ const handleClose = () => {
   dialogData.value = "";
 };
 const handleDefine = () => {
-  systemMessage.value.content[0].text = dialogData.value;
+  if (dialogData.value.trim() === "") {
+    handleClose();
+    ElMessage.warning("提示词不可为空");
+    return;
+  }
+  systemMessage.value.content[0].text = dialogData.value.trim();
+  localStorage.systemText = JSON.stringify(systemMessage.value.content[0].text);
   handleClose();
 };
 
 onMounted(() => {
+  systemMessage.value.content[0].text = localStorage.systemText ? JSON.parse(localStorage.systemText) : "你是一只可爱的猫娘！";
   loadMessage();
 });
 
