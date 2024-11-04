@@ -105,7 +105,7 @@ async function main() {
     var text = "";
     for await (const chunk of completion) {
       if (chunk.choices[0].finish_reason === "stop") {
-        messageArr.value.push(userMessage.value);
+        messageArr.value.push(JSON.parse(JSON.stringify(userMessage.value)));
         messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
         localStorage.message = JSON.stringify(messageArr.value);
         messageLook.value = messageArr.value.slice().reverse();
