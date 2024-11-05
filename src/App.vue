@@ -1,6 +1,6 @@
 <template>
 
-  <div style="position: fixed; text-align: left;">
+  <div style="position: fixed; text-align: left; z-index: 100;">
     <el-affix :offset="50">
       <div v-for="(item, index) in menu">
         <el-button :style="item.style" link @click="router.push(item.url); indexChange(index)">{{
@@ -35,6 +35,7 @@ const menu = ref(sessionStorage.index ? JSON.parse(sessionStorage.index) : [
   {url: "/", name: "首页", style: select},
   {url: "/pic", name: "图库", style: ""},
   {url: "/cloudreve", name: "网盘", style: ""},
+  {url: "/setting", name: "设置", style: ""},
 ]);
 
 const indexChange = (index) => {

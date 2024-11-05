@@ -15,7 +15,7 @@
         v-model="userMessage.content[0].text"
         v-loading="isSending"
         :autosize="{minRows: 4, maxRows: 12}"
-        placeholder="按 Ctrl+Enter 发送"
+        placeholder="在此输入"
         resize="none"
         style="width: 50%; display: block; margin: 10px auto"
         type="textarea"
@@ -66,8 +66,10 @@ import OpenAI from "openai";
 import {onMounted, ref} from "vue";
 import {ElMessage} from "element-plus";
 
+let apiKey = null;
+
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: apiKey,
   dangerouslyAllowBrowser: true
 });
 
@@ -118,7 +120,7 @@ async function main() {
       text += chunk.choices[0].delta.content;
     }
   } catch (event) {
-    ElMessage.error("请检查您的网络。")
+    ElMessage.error("请检查您的key或者网络。")
     userMessage.value.content[0].text = "";
     isSending.value = false;
   }
@@ -169,10 +171,20 @@ const handleReset = () => {
   loadSystemText();
 };
 
+// 获取本地key
+const getApiKey = () => {
+  if (localStorage.apiKey) {
+    apiKey = localStorage.apiKey;
+  } else {
+    ElMessage.warning("未设置ApiKey，请点击左边设置！")
+  }
+};
+
 // 默认加载
 onMounted(() => {
   loadSystemText();
   loadMessage();
+  getApiKey();
 });
 
 </script>

@@ -4,7 +4,8 @@ import HomeView from '../views/HomeView.vue'
 const routes = [
     {path: '/', name: 'home', component: HomeView},
     {path: '/pic', component: () => import("../views/PicView.vue")},
-    {path: '/cloudreve', component: () => import("../views/CloudreveView.vue")}
+    {path: '/cloudreve', component: () => import("../views/CloudreveView.vue")},
+    {path: '/setting', component: () => import("../views/SettingView.vue")},
 ]
 
 const router = createRouter({
