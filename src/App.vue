@@ -31,9 +31,10 @@ import {ref} from "vue";
 
 const select = "border-radius: 0; background-color: red; color: #0080FF;";
 
-const menu = ref([
+const menu = ref(sessionStorage.index ? JSON.parse(sessionStorage.index) : [
   {url: "/", name: "首页", style: select},
   {url: "/pic", name: "图库", style: ""},
+  {url: "/cloudreve", name: "网盘", style: ""},
 ]);
 
 const indexChange = (index) => {
@@ -41,6 +42,7 @@ const indexChange = (index) => {
     item.style = "";
   }
   menu.value[index].style = select;
+  sessionStorage.index = JSON.stringify(menu.value);
 };
 
 </script>

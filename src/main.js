@@ -18,7 +18,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(store).use(router).mount('#app');
 
 
-const BASE_URL = "http://www.hhr-love-xwh.top/";
+const BASE_URL = "http://www.hhr-love-xwh.top";
 window.BASE_URL = BASE_URL;
 app.config.globalProperties.BASE_URL = BASE_URL;
 

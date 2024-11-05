@@ -8,7 +8,7 @@
 <script setup>
 
 const goto = () => {
-  window.location.href = BASE_URL + "/resource/";
+  window.location.href = BASE_URL + ":5212/";
 };
 
 </script>
