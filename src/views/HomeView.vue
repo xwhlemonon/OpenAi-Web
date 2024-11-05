@@ -66,19 +66,17 @@ import OpenAI from "openai";
 import {onMounted, ref} from "vue";
 import {ElMessage} from "element-plus";
 
-let apiKey = null;
-
-const openai = new OpenAI({
-  apiKey: apiKey,
-  dangerouslyAllowBrowser: true
-});
+const isSending = ref(false);
 
 const messageArr = ref([])
 const messageLook = ref([]);
 const systemMessage = ref({role: "system", content: [{type: "text", text: "你是一只可爱的猫娘！"}]})
 const userMessage = ref({role: "user", content: [{type: "text", text: ""}]});
 
-const isSending = ref(false);
+const openai = new OpenAI({
+  apiKey: localStorage.apiKey ? localStorage.apiKey : "",
+  dangerouslyAllowBrowser: true
+});
 
 // 异步方法发送请求
 async function main() {
@@ -171,11 +169,10 @@ const handleReset = () => {
   loadSystemText();
 };
 
-// 获取本地key
-const getApiKey = () => {
-  if (localStorage.apiKey) {
-    apiKey = localStorage.apiKey;
-  } else {
+// 判断key是否存在
+const havaApiKey = () => {
+  if (!localStorage.apiKey) {
+    isSending.value = true;
     ElMessage.warning("未设置ApiKey，请点击左边设置！")
   }
 };
@@ -184,7 +181,7 @@ const getApiKey = () => {
 onMounted(() => {
   loadSystemText();
   loadMessage();
-  getApiKey();
+  havaApiKey();
 });
 
 </script>
