@@ -2,7 +2,7 @@ import {createApp} from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-
+import axios from "axios";
 
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -16,6 +16,12 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 app.use(store).use(router).mount('#app');
+
+
+const BASE_URL = "http://www.hhr-love-xwh.top/";
+window.BASE_URL = BASE_URL;
+app.config.globalProperties.BASE_URL = BASE_URL;
+
 
 const debounce = (fn, delay) => {
     let timer = null;
