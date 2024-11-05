@@ -1,9 +1,18 @@
 <template>
-  <!--  <nav>-->
-  <!--    <router-link to="/">Home</router-link>-->
-  <!--  </nav>-->
+
+  <div style="position: fixed; text-align: left;">
+    <el-affix :offset="50">
+      <div v-for="(item, index) in menu">
+        <el-button :style="item.style" link @click="router.push(item.url); indexChange(index)">{{
+            item.name
+          }}
+        </el-button>
+      </div>
+    </el-affix>
+  </div>
   <router-view/>
 </template>
+
 
 <style>
 #app {
@@ -13,17 +22,25 @@
   text-align: center;
   color: #2c3e50;
 }
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
+
+
+<script setup>
+import router from "@/router";
+import {ref} from "vue";
+
+const select = "border-radius: 0; background-color: red; color: #0080FF;";
+
+const menu = ref([
+  {url: "/", name: "首页", style: select},
+  {url: "/pic", name: "图库", style: ""},
+]);
+
+const indexChange = (index) => {
+  for (let item of menu.value) {
+    item.style = "";
+  }
+  menu.value[index].style = select;
+};
+
+</script>

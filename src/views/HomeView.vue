@@ -1,6 +1,6 @@
 <template>
   <!--发送模块-->
-  <div>
+  <div class="main">
     <div
         style="display: inline-block; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30%;">
       <span style="font-size: 14px; user-select: none;">系统提示词：</span>{{ systemMessage.content[0].text }}
@@ -36,7 +36,7 @@
   <div>
     <el-card
         v-for="item in messageLook"
-        style="width: 50%; display: block; margin: 10px auto; box-shadow: none; border: 1px solid #000;"
+        style="width: 50%; display: block; margin: 10px auto; box-shadow: none; border: 1px solid rgba(128,255,255,0.9);"
     >
       <el-row :gutter="10">
         <el-col :span="3" style="text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -55,6 +55,8 @@
       <el-button type="primary" @click="handleDefine">保存</el-button>
     </template>
   </el-dialog>
+
+  <el-backtop :bottom="100" :right="100"/>
 
 </template>
 
