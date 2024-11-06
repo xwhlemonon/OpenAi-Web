@@ -42,7 +42,9 @@
         <el-col :span="3" style="text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           {{ item.role }}
         </el-col>
-        <el-col :span="21" style="text-align: left; overflow-wrap: break-word;">{{ item.content[0].text }}</el-col>
+        <el-col :span="21" style="text-align: left;">
+          <div style="white-space: pre-wrap;" v-text="item.content[0].text"/>
+        </el-col>
       </el-row>
     </el-card>
   </div>
@@ -78,6 +80,11 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true
 });
 
+// 倒置列表
+const msgFormat = () => {
+  messageLook.value = messageArr.value.slice().reverse();
+};
+
 // 异步方法发送请求
 async function main() {
   isSending.value = true;
@@ -110,7 +117,7 @@ async function main() {
         messageArr.value.push(JSON.parse(JSON.stringify(userMessage.value)));
         messageArr.value.push({role: "assistant", content: [{type: "text", text: text}]})
         localStorage.message = JSON.stringify(messageArr.value);
-        messageLook.value = messageArr.value.slice().reverse();
+        msgFormat();
         userMessage.value.content[0].text = "";
         isSending.value = false;
         return;
@@ -127,7 +134,7 @@ async function main() {
 // 读取消息记录
 const loadMessage = () => {
   messageArr.value = localStorage.message ? JSON.parse(localStorage.message) : [];
-  messageLook.value = messageArr.value.slice().reverse();
+  msgFormat();
 };
 
 // 读取提示词
